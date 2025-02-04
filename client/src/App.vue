@@ -1,3 +1,3 @@
 <template>
-  <h1>Vue Jobs</h1>
+  <h1 class="text-7xl font-bold underline">Vue Jobs</h1>
 </template>
