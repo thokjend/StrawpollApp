@@ -11,6 +11,7 @@ const isSuccess = ref(false);
 const reset = () => {
   username.value = "";
   password.value = "";
+  infoText.value = "";
 };
 
 const handleData = async () => {
@@ -39,53 +40,64 @@ const handleData = async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center h-screen w-full">
-    <form @submit.prevent="handleData" class="border p-4 rounded-lg shadow-lg">
-      <div class="flex items-center">
-        <label for="username" class="block text-lg font-bold pr-3 w-24"
-          >Username:
-        </label>
+  <div class="flex items-center justify-center h-screen w-full bg-sky-800">
+    <form
+      @submit.prevent="handleData"
+      class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-sm w-full"
+    >
+      <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">
+        {{ registerMode ? "Register" : "Login" }}
+      </h2>
+      <div class="flex items-center mb-4">
+        <label
+          for="username"
+          class="block text-lg font-bold pr-3 w-24 text-gray-700"
+          >Username:</label
+        >
         <input
           type="text"
-          class="border rounded p-2 w-full mt-2"
+          class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="username"
+          placeholder="Enter your username"
         />
       </div>
 
-      <div class="flex items-center">
-        <label for="password" class="block text-lg font-bold pr-3 w-24"
-          >Password:
-        </label>
+      <div class="flex items-center mb-4">
+        <label
+          for="password"
+          class="block text-lg font-bold pr-3 w-24 text-gray-700"
+          >Password:</label
+        >
         <input
           type="password"
-          class="border rounded p-2 w-full mt-2"
+          class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           v-model="password"
+          placeholder="Enter your password"
         />
       </div>
 
       <div class="flex items-center justify-center mt-3">
         <button
           type="submit"
-          class="bg-sky-500 border rounded w-full h-10 font-bold cursor-pointer disabled:bg-gray-400 disabled:cursor-default disabled:border-gray-300"
+          class="bg-blue-600 text-white rounded w-full h-10 font-bold hover:bg-blue-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
           :disabled="username === '' || password === ''"
         >
-          <div v-if="registerMode == false">Login</div>
-          <div v-if="registerMode == true">Register</div>
+          <div>{{ registerMode ? "Register" : "Login" }}</div>
         </button>
       </div>
       <div class="flex items-center justify-center pt-2">
-        <div v-if="registerMode == false">
+        <div v-if="!registerMode">
           Don't have an account?
           <span
-            class="hover:underline cursor-pointer"
+            class="hover:underline cursor-pointer text-blue-500"
             @click="(registerMode = true), reset()"
             >register</span
           >
         </div>
-        <div v-if="registerMode == true">
+        <div v-if="registerMode">
           Already have an account?
           <span
-            class="hover:underline cursor-pointer"
+            class="hover:underline cursor-pointer text-blue-500"
             @click="(registerMode = false), reset()"
             >Login</span
           >
