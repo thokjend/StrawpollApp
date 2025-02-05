@@ -21,8 +21,8 @@ func InitRedis(){
 
 	_, err := Client.Ping(Ctx).Result()
 	if err != nil {
-		fmt.Println("Error connecting to Memurai:", err)
+		fmt.Println("Error connecting to Redis:", err)
 		return
 	}
-	fmt.Println("Connected to Memurai!")
+	fmt.Println("Connected to Redis!")
 }

@@ -2,15 +2,26 @@ package routes
 
 import (
 	"strawpoll-app/handlers"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRoutes() *gin.Engine {
 	router := gin.Default()
 
-	router.GET("/test", handlers.Test)
-	//router.POST("/register")
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"}, // Change to your frontend URL
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
+	router.POST("/register", handlers.Register)
+	router.POST("/login", handlers.Login)
 	
 	return router
 }
