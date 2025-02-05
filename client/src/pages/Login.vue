@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { createAccount, login } from "../services/LoginService";
 import InputField from "../components/InputField.vue";
+import router from "../router";
 
 const username = ref("");
 const password = ref("");
@@ -27,6 +28,9 @@ const handleData = async () => {
     if (response.success) {
       isSuccess.value = true;
       infoText.value = registerMode.value ? "Success! Account created" : "";
+      if (!registerMode.value) {
+        router.push({ name: "Main" });
+      }
     } else {
       isSuccess.value = false;
       infoText.value = registerMode.value
