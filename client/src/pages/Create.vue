@@ -25,11 +25,37 @@ const addOption = () => {
     parseInt(options.value[options.value.length - 1].name.split(" ")[1]) + 1;
   options.value.push({ name: `Option ${correctNumber}`, value: "" });
 };
+
+const createPoll = async () => {
+  try {
+    response = await fetch("http://localhost:8080/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Title: title.value,
+        Description: description.value,
+        Options: options.value.map((option) => option.value),
+        Settings: {
+          MultipleOptions: multipleOptions.value,
+          RequireNames: reqNames.value,
+        },
+      }),
+    });
+    if (response.ok) {
+      router.push({ name: "/" });
+    }
+  } catch (error) {
+    console.error("Error", error);
+  }
+};
 </script>
 <template>
   <div class="flex flex-col items-center min-h-screen w-full bg-sky-800 py-10">
     <h1 class="mb-4 text-3xl font-bold text-white">Create a poll</h1>
     <form
+      @submit.prevent="createPoll"
       class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-xl w-full"
     >
       <h1>Title</h1>
@@ -37,6 +63,7 @@ const addOption = () => {
         class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
         type="text"
         placeholder="Type your question here"
+        v-model="title"
       />
 
       <div v-if="toggleDescription === false" class="">
@@ -54,7 +81,10 @@ const addOption = () => {
 
       <div v-if="toggleDescription === true">
         <h1 class="">Description (optional)</h1>
-        <textarea class="w-full border rounded px-1 py-1"></textarea>
+        <textarea
+          class="w-full border rounded px-1 py-1"
+          v-model="description"
+        ></textarea>
         <div class="flex justify-end">
           <div
             @click="toggleDescription = false"
@@ -69,6 +99,7 @@ const addOption = () => {
         <input
           class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
           type="text"
+          v-model="option.value"
           :placeholder="option.name"
         />
         <button
@@ -98,6 +129,7 @@ const addOption = () => {
               id="multiple-options"
               class="w-5 h-5 accent-blue-600 cursor-pointer"
               type="checkbox"
+              v-model="multipleOptions"
             />
           </div>
           <div class="flex items-center justify-between">
@@ -108,12 +140,14 @@ const addOption = () => {
               id="require-names"
               class="w-5 h-5 accent-blue-600 cursor-pointer"
               type="checkbox"
+              v-model="reqNames"
             />
           </div>
         </div>
       </div>
 
       <button
+        type="submit"
         class="bg-blue-600 text-white rounded w-full h-10 font-bold hover:bg-blue-700 transition duration-300 cursor-pointer mt-4"
       >
         Create poll
