@@ -29,7 +29,7 @@ const handleData = async () => {
       isSuccess.value = true;
       infoText.value = registerMode.value ? "Success! Account created" : "";
       if (!registerMode.value) {
-        router.push({ name: "Main" });
+        router.push({ name: "Create" });
       }
     } else {
       isSuccess.value = false;
@@ -73,7 +73,7 @@ const handleData = async () => {
       <div class="flex items-center justify-center mt-3">
         <button
           type="submit"
-          class="bg-blue-600 text-white rounded w-full h-10 font-bold hover:bg-blue-700 transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          class="bg-blue-600 text-white rounded w-full h-10 font-bold hover:bg-blue-700 transition duration-300 cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed"
           :disabled="username === '' || password === ''"
         >
           <div>{{ registerMode ? "Register" : "Login" }}</div>
