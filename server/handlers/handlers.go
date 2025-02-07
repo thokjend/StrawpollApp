@@ -10,6 +10,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+/*
+gin.Context = 	pointer to a Context object from the Gin web framework,
+				which is used to handle HTTP requests and responses.
+				It provides methods to parse JSON, set response status codes, and send JSON responses.
+*/
 
 func Register(c *gin.Context){
 	var user models.User
@@ -72,4 +77,8 @@ func Login(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+}
+
+func CreatePoll(c *gin.Context){
+	var pollData models.Poll
 }
