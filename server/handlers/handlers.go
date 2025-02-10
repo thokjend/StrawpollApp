@@ -103,3 +103,24 @@ func CreatePoll(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{"message": "Poll created successfully"})
 
 }
+
+func ViewPoll(c *gin.Context){
+	id := c.Param("id")
+
+	data, err := database.Client.HGetAll(database.Ctx, id).Result()
+	if err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch poll data"})
+		return
+	}
+	if len(data) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Poll not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Poll retrived successfully",
+		"data":data,
+	})
+
+	
+}
