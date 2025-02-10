@@ -30,6 +30,8 @@ const handleData = async () => {
       infoText.value = registerMode.value ? "Success! Account created" : "";
       if (!registerMode.value) {
         router.push({ name: "Create" });
+      } else {
+        registerMode.value = false;
       }
     } else {
       isSuccess.value = false;

@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from "vue";
+import router from "../router";
+
 const options = ref([
   {
     name: "Option 1",
@@ -47,7 +49,7 @@ const createPoll = async () => {
     missingOptions.value = false;
   }
   try {
-    response = await fetch("http://localhost:8080/create", {
+    const response = await fetch("http://localhost:8080/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -60,7 +62,7 @@ const createPoll = async () => {
       }),
     });
     if (response.ok) {
-      router.push({ name: "/" });
+      router.push({ name: "Login" });
     }
   } catch (error) {
     console.error("Error", error);
