@@ -15,6 +15,8 @@ const title = ref("");
 const description = ref("");
 const multipleOptions = ref(false);
 const reqNames = ref(false);
+const missingTitle = ref(false);
+const missingOptions = ref(false);
 
 const deleteTask = () => {
   options.value.pop();
@@ -27,6 +29,23 @@ const addOption = () => {
 };
 
 const createPoll = async () => {
+  const filteredOptions = options.value
+    .map((options) => options.value.trim())
+    .filter((value) => value !== "");
+
+  if (title.value.trim() === "") {
+    missingTitle.value = true;
+    return;
+  } else {
+    missingTitle.value = false;
+  }
+
+  if (filteredOptions.length === 0) {
+    missingOptions.value = true;
+    return;
+  } else {
+    missingOptions.value = false;
+  }
   try {
     response = await fetch("http://localhost:8080/create", {
       method: "POST",
@@ -36,11 +55,8 @@ const createPoll = async () => {
       body: JSON.stringify({
         Title: title.value,
         Description: description.value,
-        Options: options.value.map((option) => option.value),
-        Settings: {
-          MultipleOptions: multipleOptions.value,
-          RequireNames: reqNames.value,
-        },
+        Options: filteredOptions,
+        Settings: [multipleOptions.value, reqNames.value],
       }),
     });
     if (response.ok) {
@@ -60,11 +76,19 @@ const createPoll = async () => {
     >
       <h1>Title</h1>
       <input
-        class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+        class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 mb-2"
+        :class="{
+          'focus:ring-blue-500': !missingTitle,
+          'focus:ring-red-500 border-red-500': missingTitle,
+        }"
         type="text"
         placeholder="Type your question here"
         v-model="title"
       />
+
+      <div v-if="missingTitle === true" class="text-red-500 font-bold">
+        Please enter a poll title
+      </div>
 
       <div v-if="toggleDescription === false" class="">
         <div class="flex">
@@ -144,6 +168,12 @@ const createPoll = async () => {
             />
           </div>
         </div>
+      </div>
+      <div
+        v-if="missingOptions === true"
+        class="mt-4 p-4 rounded-lg shadow-md bg-red-200 text-red-700"
+      >
+        Please enter at least one answer option
       </div>
 
       <button

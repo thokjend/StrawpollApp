@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strawpoll-app/database"
+	"strings"
 
 	"strawpoll-app/models"
 
@@ -81,4 +82,24 @@ func Login(c *gin.Context) {
 
 func CreatePoll(c *gin.Context){
 	var pollData models.Poll
+
+	if err := c.ShouldBindJSON(&pollData); err != nil{
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	err := database.Client.HSet(database.Ctx, pollData.Title, map[string]interface{}{
+		"description": pollData.Description,
+		"options":     strings.Join(pollData.Options, "|"),
+		"multiple":    pollData.Settings[0],
+		"requireNames": pollData.Settings[1],
+	}).Err()
+
+	if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save poll data"})
+        return
+    }
+
+	c.JSON(http.StatusOK, gin.H{"message": "Poll created successfully"})
+
 }
