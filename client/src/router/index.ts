@@ -16,9 +16,10 @@ const routes = [
     component: CreatePage,
   },
   {
-    path: "/view",
+    path: "/poll/:id",
     name: "View",
     component: ViewPollPage,
+    props: true,
   },
 ];
 

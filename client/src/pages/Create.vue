@@ -61,8 +61,12 @@ const createPoll = async () => {
         Settings: [multipleOptions.value, reqNames.value],
       }),
     });
-    if (response.ok) {
-      router.push({ name: "Login" });
+
+    const result = await response.json();
+    console.log("Poll created:", result);
+
+    if (result.id) {
+      router.push(`/poll/${result.id}`);
     }
   } catch (error) {
     console.error("Error", error);

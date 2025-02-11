@@ -8,6 +8,7 @@ import (
 	"strawpoll-app/models"
 
 	"github.com/gin-gonic/gin"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -82,13 +83,20 @@ func Login(c *gin.Context) {
 
 func CreatePoll(c *gin.Context){
 	var pollData models.Poll
+	id, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
 
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate poll ID"})
+		return
+	}
+	
 	if err := c.ShouldBindJSON(&pollData); err != nil{
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
-	err := database.Client.HSet(database.Ctx, pollData.Title, map[string]interface{}{
+	err = database.Client.HSet(database.Ctx, id, map[string]interface{}{
+		"title"      : pollData.Title,
 		"description": pollData.Description,
 		"options":     strings.Join(pollData.Options, "|"),
 		"multiple":    pollData.Settings[0],
@@ -100,7 +108,10 @@ func CreatePoll(c *gin.Context){
         return
     }
 
-	c.JSON(http.StatusOK, gin.H{"message": "Poll created successfully"})
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Poll created successfully",
+		"id": 		id,
+	})
 
 }
 
@@ -121,6 +132,4 @@ func ViewPoll(c *gin.Context){
 		"message": "Poll retrived successfully",
 		"data":data,
 	})
-
-	
 }
