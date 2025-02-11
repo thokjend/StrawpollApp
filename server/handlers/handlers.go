@@ -89,18 +89,18 @@ func CreatePoll(c *gin.Context){
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate poll ID"})
 		return
 	}
-	
+
 	if err := c.ShouldBindJSON(&pollData); err != nil{
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
 	}
 
 	err = database.Client.HSet(database.Ctx, id, map[string]interface{}{
-		"title"      : pollData.Title,
-		"description": pollData.Description,
-		"options":     strings.Join(pollData.Options, "|"),
-		"multiple":    pollData.Settings[0],
-		"requireNames": pollData.Settings[1],
+		"title"       :	pollData.Title,
+		"description" :	pollData.Description,
+		"options"     :	strings.Join(pollData.Options, "|"),
+		"multiple"    :	pollData.Settings[0],
+		"requireNames":	pollData.Settings[1],
 	}).Err()
 
 	if err != nil {

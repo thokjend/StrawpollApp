@@ -17,7 +17,7 @@ const routes = [
   },
   {
     path: "/poll/:id",
-    name: "View",
+    name: "ViewPoll",
     component: ViewPollPage,
     props: true,
   },
