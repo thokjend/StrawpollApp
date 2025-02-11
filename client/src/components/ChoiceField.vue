@@ -39,7 +39,8 @@ const typeOfInput = () => {
             class="cursor-pointer"
             :type="typeOfInput()"
             name="input"
-          /><label class="ml-2">
+            :id="'checkbox-' + index"
+          /><label class="ml-2 cursor-pointer" :for="'checkbox-' + index">
             {{ choice }}
           </label>
         </div>

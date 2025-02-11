@@ -20,8 +20,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center min-h-screen w-full bg-sky-800 py-10">
-    <div
+  <div
+    class="flex flex-col items-center justify-center min-h-screen w-full bg-sky-800"
+  >
+    <form
       v-if="pollData !== null"
       class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-xl w-full"
     >
@@ -32,14 +34,31 @@ onMounted(async () => {
         :options="pollData?.options"
         :multipleChoice="pollData?.multiple"
       />
+      <div v-if="pollData?.requireNames === '1'">
+        <h1 class="flex flex-row gap-1">
+          <div class="font-semibold">Name</div>
+          (Required)
+        </h1>
+        <input
+          class="border rounded p-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          type="text"
+        />
+      </div>
 
-      <button
-        type="submit"
-        class="bg-blue-600 text-white rounded w-full h-10 font-bold hover:bg-blue-700 transition duration-300 cursor-pointer mt-4"
-      >
-        Vote
-      </button>
-    </div>
+      <div class="flex flex-row justify-between mt-4">
+        <button
+          type="submit"
+          class="bg-blue-600 text-white rounded w-25 h-10 font-semibold hover:bg-blue-700 transition duration-300 cursor-pointer"
+        >
+          Vote
+        </button>
+        <button
+          class="bg-blue-600 text-white rounded w-25 h-10 font-semibold hover:bg-blue-700 transition duration-300 cursor-pointer"
+        >
+          Show results
+        </button>
+      </div>
+    </form>
     <div class="text-white font-bold text-3xl" v-else>Poll not found</div>
   </div>
 </template>
