@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import SingleChoice from "../components/ChoiceField.vue";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -26,24 +27,18 @@ onMounted(async () => {
     >
       <h1 class="font-bold text-xl">{{ pollData?.title }}</h1>
       <p class="text-gray-700">{{ pollData?.description }}</p>
-      <div class="mt-4">
-        <h2 class="font-semibold">Make a choice:</h2>
-        <ul class="mt-2">
-          <li
-            v-for="(choice, index) in pollData?.options.split('|')"
-            :key="index"
-            class="p-2"
-          >
-            <div class="">
-              <input class="" type="checkbox" /><label
-                :for="'checkbox-' + index"
-                class="ml-2"
-                >{{ choice }}</label
-              >
-            </div>
-          </li>
-        </ul>
-      </div>
+      <SingleChoice
+        :type="pollData?.multiple"
+        :options="pollData?.options"
+        :multipleChoice="pollData?.multiple"
+      />
+
+      <button
+        type="submit"
+        class="bg-blue-600 text-white rounded w-full h-10 font-bold hover:bg-blue-700 transition duration-300 cursor-pointer mt-4"
+      >
+        Vote
+      </button>
     </div>
     <div class="text-white font-bold text-3xl" v-else>Poll not found</div>
   </div>
