@@ -8,6 +8,7 @@ const pollId = route.params.id;
 const pollData = ref(null);
 const selectedOptions = ref([]);
 const userName = ref("");
+const missingOptions = ref(false);
 
 onMounted(async () => {
   try {
@@ -21,6 +22,10 @@ onMounted(async () => {
 });
 
 const submitVote = async () => {
+  if (selectedOptions.value.length === 0) {
+    missingOptions.value = true;
+    return;
+  }
   try {
     const response = await fetch(`http://localhost:8080/poll/${pollId}/vote`, {
       method: "POST",
@@ -32,6 +37,9 @@ const submitVote = async () => {
         Username: userName.value,
       }),
     });
+    if (response.ok) {
+      missingOptions.value = false;
+    }
   } catch (error) {
     console.error("Database error:", error);
   }
@@ -65,6 +73,13 @@ const submitVote = async () => {
           type="text"
           v-model="userName"
         />
+      </div>
+
+      <div
+        v-if="missingOptions === true"
+        class="mt-4 p-4 rounded-lg shadow-md bg-red-200 text-red-700"
+      >
+        Please choose at least one option
       </div>
 
       <div class="flex flex-row justify-between mt-4">
