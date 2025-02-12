@@ -29,9 +29,9 @@ const props = defineProps({
       {{ label }}:
     </label>
     <input
+      class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       :type="type"
       :id="id"
-      class="border rounded p-2 w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       :placeholder="placeholder"

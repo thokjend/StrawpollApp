@@ -81,7 +81,52 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
 
-func CreatePoll(c *gin.Context){
+func CreatePoll(c *gin.Context) {
+	var pollData models.Poll
+	id, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate poll ID"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&pollData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	// Store poll metadata
+	err = database.Client.HSet(database.Ctx, id, map[string]interface{}{
+		"title":        pollData.Title,
+		"description":  pollData.Description,
+		"multiple":     pollData.Settings[0],
+		"requireNames": pollData.Settings[1],
+	}).Err()
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save poll data"})
+		return
+	}
+
+	// Store options with an initial vote count of 0
+	optionVotes := make(map[string]interface{})
+	for _, option := range pollData.Options {
+		optionVotes[option] = 0
+	}
+
+	err = database.Client.HSet(database.Ctx, id+":votes", optionVotes).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save poll options"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Poll created successfully",
+		"id":      id,
+	})
+}
+
+/* func CreatePoll(c *gin.Context){
 	var pollData models.Poll
 	id, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
 
@@ -113,9 +158,37 @@ func CreatePoll(c *gin.Context){
 		"id": 		id,
 	})
 
+} */
+
+func GetPoll(c *gin.Context) {
+	pollID := c.Param("id")
+
+	poll, err := database.Client.HGetAll(database.Ctx, pollID).Result()
+	if err != nil || len(poll) == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Poll not found"})
+		return
+	}
+
+	// Retrieve vote counts
+	votes, err := database.Client.HGetAll(database.Ctx, pollID+":votes").Result()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve votes"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Poll retrieved successfully",
+		"data": gin.H{
+			"title":        poll["title"],
+			"description":  poll["description"],
+			"multiple":     poll["multiple"],
+			"requireNames": poll["requireNames"],
+			"votes":        votes,
+		},
+	})
 }
 
-func ViewPoll(c *gin.Context){
+/* func ViewPoll(c *gin.Context){
 	id := c.Param("id")
 
 	data, err := database.Client.HGetAll(database.Ctx, id).Result()
@@ -132,4 +205,29 @@ func ViewPoll(c *gin.Context){
 		"message": "Poll retrived successfully",
 		"data":data,
 	})
+} */
+
+func VotePoll(c *gin.Context) {
+	pollID := c.Param("id")
+	var voteData struct {
+		Option string `json:"Option"`
+	}
+
+	if err := c.ShouldBindJSON(&voteData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	options := strings.Split(voteData.Option, ",")
+
+	// Increment the vote count for the chosen option
+	for _, option := range options {
+		err := database.Client.HIncrBy(database.Ctx, pollID+":votes", option, 1).Err()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to record vote"})
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Vote recorded successfully"})
 }

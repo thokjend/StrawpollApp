@@ -1,11 +1,13 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import SingleChoice from "../components/ChoiceField.vue";
+import ChoiceField from "../components/ChoiceField.vue";
 
 const route = useRoute();
 const pollId = route.params.id;
 const pollData = ref(null);
+const selectedOptions = ref([]);
+const userName = ref("");
 
 onMounted(async () => {
   try {
@@ -17,6 +19,23 @@ onMounted(async () => {
     console.log("Error fetching poll");
   }
 });
+
+const submitVote = async () => {
+  try {
+    const response = await fetch(`http://localhost:8080/poll/${pollId}/vote`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Option: selectedOptions.value.join(","),
+        Username: userName.value,
+      }),
+    });
+  } catch (error) {
+    console.error("Database error:", error);
+  }
+};
 </script>
 
 <template>
@@ -24,15 +43,17 @@ onMounted(async () => {
     class="flex flex-col items-center justify-center min-h-screen w-full bg-sky-800"
   >
     <form
+      @submit.prevent="submitVote"
       v-if="pollData !== null"
       class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-xl w-full"
     >
       <h1 class="font-bold text-xl">{{ pollData?.title }}</h1>
       <p class="text-gray-700">{{ pollData?.description }}</p>
-      <SingleChoice
+      <ChoiceField
         :type="pollData?.multiple"
-        :options="pollData?.options"
+        :options="pollData?.votes"
         :multipleChoice="pollData?.multiple"
+        v-model="selectedOptions"
       />
       <div v-if="pollData?.requireNames === '1'">
         <h1 class="flex flex-row gap-1">
@@ -42,6 +63,7 @@ onMounted(async () => {
         <input
           class="border rounded p-2 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="text"
+          v-model="userName"
         />
       </div>
 
@@ -53,6 +75,7 @@ onMounted(async () => {
           Vote
         </button>
         <button
+          @click.prevent="console.log(selectedOptions)"
           class="bg-blue-600 text-white rounded w-25 h-10 font-semibold hover:bg-blue-700 transition duration-300 cursor-pointer"
         >
           Show results
