@@ -126,39 +126,24 @@ func CreatePoll(c *gin.Context) {
 	})
 }
 
-/* func CreatePoll(c *gin.Context){
-	var pollData models.Poll
-	id, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 8)
+/* func GetUser(c *gin.Context) {
+    username := c.Param("username")
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate poll ID"})
-		return
-	}
-
-	if err := c.ShouldBindJSON(&pollData); err != nil{
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-
-	err = database.Client.HSet(database.Ctx, id, map[string]interface{}{
-		"title"       :	pollData.Title,
-		"description" :	pollData.Description,
-		"options"     :	strings.Join(pollData.Options, "|"),
-		"multiple"    :	pollData.Settings[0],
-		"requireNames":	pollData.Settings[1],
-	}).Err()
-
-	if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save poll data"})
+    password, err := database.Client.Get(database.Ctx, username).Result()
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
         return
     }
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Poll created successfully",
-		"id": 		id,
-	})
-
+    c.JSON(http.StatusOK, gin.H{
+        "message": "User retrieved successfully",
+        "data": gin.H{
+            "username": username,
+            "password": password,
+        },
+    })
 } */
+
 
 func GetPoll(c *gin.Context) {
 	pollID := c.Param("id")
@@ -188,24 +173,6 @@ func GetPoll(c *gin.Context) {
 	})
 }
 
-/* func ViewPoll(c *gin.Context){
-	id := c.Param("id")
-
-	data, err := database.Client.HGetAll(database.Ctx, id).Result()
-	if err != nil{
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch poll data"})
-		return
-	}
-	if len(data) == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Poll not found"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Poll retrived successfully",
-		"data":data,
-	})
-} */
 
 func VotePoll(c *gin.Context) {
 	pollID := c.Param("id")

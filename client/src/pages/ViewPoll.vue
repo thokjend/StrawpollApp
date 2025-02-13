@@ -39,6 +39,7 @@ const submitVote = async () => {
     });
     if (response.ok) {
       missingOptions.value = false;
+      router.push(`/poll/${result.id}/result`);
     }
   } catch (error) {
     console.error("Database error:", error);
@@ -63,7 +64,7 @@ const submitVote = async () => {
         :multipleChoice="pollData?.multiple"
         v-model="selectedOptions"
       />
-      <div v-if="pollData?.requireNames === '1'">
+      <!-- <div v-if="pollData?.requireNames === '1'">
         <h1 class="flex flex-row gap-1">
           <div class="font-semibold">Name</div>
           (Required)
@@ -73,7 +74,7 @@ const submitVote = async () => {
           type="text"
           v-model="userName"
         />
-      </div>
+      </div> -->
 
       <div
         v-if="missingOptions === true"

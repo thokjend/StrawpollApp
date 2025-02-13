@@ -22,6 +22,7 @@ func SetupRoutes() *gin.Engine {
 
 	router.POST("/register", handlers.Register)
 	router.POST("/login", handlers.Login)
+	/* router.GET("/user/:username", handlers.GetUser) */
 	router.POST("/create", handlers.CreatePoll)
 	router.GET("/poll/:id", handlers.GetPoll)
 	router.POST("poll/:id/vote", handlers.VotePoll)
