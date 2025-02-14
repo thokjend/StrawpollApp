@@ -10,13 +10,13 @@ const route = useRoute();
 const pollId = route.params.id;
 const pollData = ref(null);
 
-const colors = [
+/* const colors = [
   "#FF0000", // Red
   "#00FF00", // Green
   "#0000FF", // Blue
   "#FFFF00", // Yellow
   "#FF00FF", // Magenta
-];
+]; */
 
 onMounted(async () => {
   try {
@@ -26,11 +26,13 @@ onMounted(async () => {
 
     const votes = pollData.value.votes;
 
-    const pieData = Object.keys(votes).map((key) => ({
-      name: key,
-      value: parseInt(votes[key]),
-      itemStyle: { color: colors[index % colors.length] },
-    }));
+    const pieData = Object.keys(votes)
+      .filter((key) => votes[key] > 0)
+      .map((key) => ({
+        name: key,
+        value: parseInt(votes[key]),
+        /* itemStyle: { color: colors[index % colors.length] }, */
+      }));
 
     chartOptions.value.series[0].data = pieData;
 
@@ -45,10 +47,24 @@ const chartOptions = ref({
   series: [
     {
       type: "pie",
+      label: {
+        show: true,
+        position: "outside",
+        formatter: "{b}: {c} ({d}%)",
+      },
       data: [],
     },
   ],
 });
+
+const GetAllVotes = () => {
+  let totalVotes = 0;
+  const votes = Object.values(pollData?.value.votes || {});
+  for (const vote of votes) {
+    totalVotes += parseInt(vote);
+  }
+  return totalVotes;
+};
 </script>
 
 <template>
@@ -67,11 +83,22 @@ const chartOptions = ref({
             class="border p-4 rounded-md bg-gray-100"
             v-for="(vote, index) in Object.entries(pollData?.votes || {})"
             :key="index"
-            :style="{ color: colors[index % colors.length] }"
           >
             <div class="text-lg font-medium flex justify-between">
               <div>{{ vote[0] }}</div>
-              <div>{{ vote[1] }} votes</div>
+              <div>
+                {{ ((vote[1] / GetAllVotes()) * 100).toFixed(2) }}% ({{
+                  vote[1]
+                }}
+                votes)
+              </div>
+            </div>
+
+            <div class="w-full bg-gray-300 rounded-full h-5 mt-2">
+              <div
+                class="bg-blue-500 h-5 rounded-full transition-all duration-300"
+                :style="{ width: (vote[1] / GetAllVotes()) * 100 + '%' }"
+              ></div>
             </div>
           </div>
         </div>
