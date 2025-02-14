@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strawpoll-app/database"
 	"strings"
+	"time"
 
 	"strawpoll-app/models"
 
@@ -78,7 +79,24 @@ func Login(c *gin.Context) {
         return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	// Create a session token
+	sessionToken, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 32)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate session token"})
+		return
+	}
+
+	// Store session token in Redis with expiration time
+	err = database.Client.Set(database.Ctx, "session:"+sessionToken, user.Username, 1*time.Hour).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store session token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Login successful",
+		"token":   sessionToken,
+	})
 }
 
 func CreatePoll(c *gin.Context) {

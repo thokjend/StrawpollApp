@@ -4,6 +4,8 @@ import (
 	"strawpoll-app/handlers"
 	"time"
 
+	"strawpoll-app/middleware"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -22,10 +24,14 @@ func SetupRoutes() *gin.Engine {
 
 	router.POST("/register", handlers.Register)
 	router.POST("/login", handlers.Login)
-	/* router.GET("/user/:username", handlers.GetUser) */
-	router.POST("/create", handlers.CreatePoll)
-	router.GET("/poll/:id", handlers.GetPoll)
-	router.POST("poll/:id/vote", handlers.VotePoll)
+
+	protected := router.Group("/")
+	protected.Use(middleware.AuthMiddleware())
+	{
+		protected.POST("/polls", handlers.CreatePoll)
+		protected.GET("/polls/:id", handlers.GetPoll)
+		protected.POST("/polls/:id/vote", handlers.VotePoll)
+	}
 	
 	return router
 }
