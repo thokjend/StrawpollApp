@@ -18,6 +18,12 @@ const reset = () => {
 
 const handleData = async () => {
   try {
+    const existingToken = localStorage.getItem("sessionToken");
+    if (existingToken && !registerMode.value) {
+      router.push({ name: "Create" }); // If already logged in, go to the next page
+      return;
+    }
+
     let response;
     if (registerMode.value) {
       response = await createAccount(username.value, password.value);

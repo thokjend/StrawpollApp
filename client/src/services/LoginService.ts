@@ -37,6 +37,8 @@ export const login = async (username: string, password: string) => {
     });
 
     if (response.ok) {
+      const data = await response.json();
+      localStorage.setItem("sessionToken", data.token);
       return { success: true };
     } else {
       return { success: false };
