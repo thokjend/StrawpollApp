@@ -9,6 +9,7 @@ import (
 	"strawpoll-app/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -80,14 +81,11 @@ func Login(c *gin.Context) {
 	}
 
 	// Create a session token
-	sessionToken, err := gonanoid.Generate("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 32)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate session token"})
-		return
-	}
+	sessionToken := uuid.NewString()
+	expiresAt := 3600 * time.Second
 
 	// Store session token in Redis with expiration time
-	err = database.Client.Set(database.Ctx, "session:"+sessionToken, user.Username, 1*time.Hour).Err()
+	err = database.Client.Set(database.Ctx, "session:"+sessionToken, user.Username, expiresAt).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store session token"})
 		return
