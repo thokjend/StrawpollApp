@@ -92,7 +92,7 @@ const submitVote = async () => {
           Vote
         </button>
         <button
-          @click.prevent="console.log(selectedOptions)"
+          @click.prevent="router.push(`/poll/${pollId}/result`)"
           class="bg-blue-600 text-white rounded w-25 h-10 font-semibold hover:bg-blue-700 transition duration-300 cursor-pointer"
         >
           Show results

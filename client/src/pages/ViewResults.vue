@@ -5,6 +5,7 @@ import { PieChart } from "echarts/charts";
 import VChart from "vue-echarts";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
+import router from "../router";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -74,7 +75,7 @@ const GetAllVotes = () => {
     <div
       class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-4xl w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6"
     >
-      <div class="flex-1">
+      <div class="flex-1 flex flex-col">
         <h1 class="font-bold text-2xl mb-6 text-center md:text-left">
           {{ pollData?.title }}
         </h1>
@@ -101,6 +102,14 @@ const GetAllVotes = () => {
               ></div>
             </div>
           </div>
+        </div>
+        <div class="mt-auto flex p-4">
+          <button
+            @click.prevent="router.push(`/poll/${pollId}`)"
+            class="bg-blue-600 text-white rounded w-25 h-10 font-semibold hover:bg-blue-700 transition duration-300 cursor-pointer"
+          >
+            Back to poll
+          </button>
         </div>
       </div>
       <div class="flex-1 flex items-center justify-center">
