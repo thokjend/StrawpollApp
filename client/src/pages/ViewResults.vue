@@ -88,17 +88,23 @@ const GetAllVotes = () => {
             <div class="text-lg font-medium flex justify-between">
               <div>{{ vote[0] }}</div>
               <div>
-                {{ ((vote[1] / GetAllVotes()) * 100).toFixed(2) }}% ({{
-                  vote[1]
-                }}
-                votes)
+                {{
+                  GetAllVotes() > 0 && vote[1] > 0
+                    ? ((vote[1] / GetAllVotes()) * 100).toFixed(2)
+                    : "0"
+                }}% ({{ vote[1] }} votes)
               </div>
             </div>
 
             <div class="w-full bg-gray-300 rounded-full h-5 mt-2">
               <div
                 class="bg-blue-500 h-5 rounded-full transition-all duration-300"
-                :style="{ width: (vote[1] / GetAllVotes()) * 100 + '%' }"
+                :style="{
+                  width:
+                    GetAllVotes() > 0
+                      ? (vote[1] / GetAllVotes()) * 100 + '%'
+                      : 0,
+                }"
               ></div>
             </div>
           </div>
