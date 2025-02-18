@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import router from "../router";
 import ChoiceField from "../components/ChoiceField.vue";
 
 const route = useRoute();
@@ -39,7 +40,7 @@ const submitVote = async () => {
     });
     if (response.ok) {
       missingOptions.value = false;
-      router.push(`/poll/${result.id}/result`);
+      router.push(`/poll/${pollId}/result`);
     }
   } catch (error) {
     console.error("Database error:", error);

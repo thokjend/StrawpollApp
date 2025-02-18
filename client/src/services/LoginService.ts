@@ -16,7 +16,7 @@ export const createAccount = async (username: string, password: string) => {
     } else if (response.status === 400) {
       return { success: false };
     } else {
-      throw new Error("Failed to user to the database");
+      throw new Error("Failed to create account");
     }
   } catch (error) {
     console.error("Database error:", error);
