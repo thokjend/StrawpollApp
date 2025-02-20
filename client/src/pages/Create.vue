@@ -76,6 +76,7 @@ const createPoll = async () => {
 
 onMounted(async () => {
   const token = localStorage.getItem("sessionToken");
+  console.log(token);
   if (!token) return;
 
   try {
