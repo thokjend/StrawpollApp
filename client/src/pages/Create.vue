@@ -76,20 +76,32 @@ const createPoll = async () => {
 
 onMounted(async () => {
   const token = localStorage.getItem("sessionToken");
-  console.log(token);
-  if (!token) return;
+  if (!token) {
+    router.push({ name: "Login" });
+    return;
+  }
 
   try {
     const response = await fetch("http://localhost:8080/protected-route", {
       headers: {
-        Authorization: token, // Use the session token in headers
+        Authorization: token,
       },
     });
+
+    if (!response.ok) {
+      // If response is unauthorized (401), force logout
+      if (response.status === 401) {
+        localStorage.removeItem("sessionToken");
+        router.push({ name: "Login" });
+      }
+      throw new Error("Unauthorized access");
+    }
 
     const result = await response.json();
     console.log(result);
   } catch (error) {
-    console.log("Error verifying session");
+    console.log("Error verifying session", error);
+    router.push({ name: "Login" });
   }
 });
 </script>
