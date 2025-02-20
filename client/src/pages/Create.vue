@@ -75,13 +75,20 @@ const createPoll = async () => {
 };
 
 onMounted(async () => {
-  const username = localStorage.getItem("username");
+  const token = localStorage.getItem("sessionToken");
+  if (!token) return;
+
   try {
-    const response = await fetch(`http://localhost:8080/session/${username}`);
+    const response = await fetch("http://localhost:8080/protected-route", {
+      headers: {
+        Authorization: token, // Use the session token in headers
+      },
+    });
+
     const result = await response.json();
-    sessionToken.value = result;
+    console.log(result);
   } catch (error) {
-    console.log("Error fetching session token");
+    console.log("Error verifying session");
   }
 });
 </script>

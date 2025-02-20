@@ -83,9 +83,10 @@ func Login(c *gin.Context) {
 	// Create a session token
 	sessionToken := uuid.NewString()
 	expiresAt := 3600 * time.Second
+	key := "session:" + sessionToken 
 
 	// Store session token in Redis with expiration time
-	err = database.Client.Set(database.Ctx, user.Username + ":session", sessionToken, expiresAt).Err()
+	err = database.Client.Set(database.Ctx, key, user.Username, expiresAt).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store session token"})
 		return
@@ -97,7 +98,29 @@ func Login(c *gin.Context) {
 	})
 }
 
-func GetSession(c *gin.Context) {
+func AuthMiddleware() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        token := c.GetHeader("Authorization")
+        if token == "" {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+            c.Abort()
+            return
+        }
+
+        // Look up the token in Redis
+        username, err := database.Client.Get(database.Ctx, "session:"+token).Result()
+        if err != nil {
+            c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid session token"})
+            c.Abort()
+            return
+        }
+
+        c.Set("username", username) // Store username in context
+        c.Next()
+    }
+}
+
+/* func GetSession(c *gin.Context) {
 	userName := c.Param("username")
 
 	session, err := database.Client.Get(database.Ctx, userName+":session").Result()
@@ -109,7 +132,7 @@ func GetSession(c *gin.Context) {
 		"message": "Session retrived successfully",
 		"id": session,
 	})
-}
+} */
 
 func CreatePoll(c *gin.Context) {
 	var pollData models.Poll
