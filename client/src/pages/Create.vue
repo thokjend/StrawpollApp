@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import router from "../router";
 
 const options = ref([
@@ -19,6 +19,7 @@ const multipleOptions = ref(false);
 const reqNames = ref(false);
 const missingTitle = ref(false);
 const missingOptions = ref(false);
+const sessionToken = ref("");
 
 const deleteTask = () => {
   options.value.pop();
@@ -72,6 +73,17 @@ const createPoll = async () => {
     console.error("Error", error);
   }
 };
+
+onMounted(async () => {
+  const username = localStorage.getItem("username");
+  try {
+    const response = await fetch(`http://localhost:8080/session/${username}`);
+    const result = await response.json();
+    sessionToken.value = result;
+  } catch (error) {
+    console.log("Error fetching session token");
+  }
+});
 </script>
 <template>
   <div class="flex flex-col items-center min-h-screen w-full bg-sky-800 py-10">

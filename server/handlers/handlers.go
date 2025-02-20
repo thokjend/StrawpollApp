@@ -85,7 +85,7 @@ func Login(c *gin.Context) {
 	expiresAt := 3600 * time.Second
 
 	// Store session token in Redis with expiration time
-	err = database.Client.Set(database.Ctx, "session:"+sessionToken, user.Username, expiresAt).Err()
+	err = database.Client.Set(database.Ctx, user.Username + ":session", sessionToken, expiresAt).Err()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store session token"})
 		return
@@ -94,6 +94,20 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Login successful",
 		"token":   sessionToken,
+	})
+}
+
+func GetSession(c *gin.Context) {
+	userName := c.Param("username")
+
+	session, err := database.Client.Get(database.Ctx, userName+":session").Result()
+	if err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve session"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Session retrived successfully",
+		"id": session,
 	})
 }
 
@@ -141,24 +155,6 @@ func CreatePoll(c *gin.Context) {
 		"id":      id,
 	})
 }
-
-/* func GetUser(c *gin.Context) {
-    username := c.Param("username")
-
-    password, err := database.Client.Get(database.Ctx, username).Result()
-    if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-        return
-    }
-
-    c.JSON(http.StatusOK, gin.H{
-        "message": "User retrieved successfully",
-        "data": gin.H{
-            "username": username,
-            "password": password,
-        },
-    })
-} */
 
 
 func GetPoll(c *gin.Context) {

@@ -29,6 +29,7 @@ const handleData = async () => {
       isSuccess.value = true;
       infoText.value = registerMode.value ? "Success! Account created" : "";
       if (!registerMode.value) {
+        localStorage.setItem("username", username.value);
         router.push({ name: "Create" });
       } else {
         registerMode.value = false;
