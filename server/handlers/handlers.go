@@ -82,7 +82,7 @@ func Login(c *gin.Context) {
 
 	// Create a session token
 	sessionToken := uuid.NewString()
-	expiresAt := 1800 * time.Second
+	expiresAt := 10 * time.Second
 	key := "session:" + sessionToken 
 
 	// Store session token in Redis with expiration time

@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import router from "../router";
+import { ValidateUser } from "../utils/ValidateUser";
 
 const options = ref([
   {
@@ -75,34 +76,7 @@ const createPoll = async () => {
 };
 
 onMounted(async () => {
-  const token = localStorage.getItem("sessionToken");
-  if (!token) {
-    router.push({ name: "Login" });
-    return;
-  }
-
-  try {
-    const response = await fetch("http://localhost:8080/protected-route", {
-      headers: {
-        Authorization: token,
-      },
-    });
-
-    if (!response.ok) {
-      // If response is unauthorized (401), force logout
-      if (response.status === 401) {
-        localStorage.removeItem("sessionToken");
-        router.push({ name: "Login" });
-      }
-      throw new Error("Unauthorized access");
-    }
-
-    const result = await response.json();
-    console.log(result);
-  } catch (error) {
-    console.log("Error verifying session", error);
-    router.push({ name: "Login" });
-  }
+  await ValidateUser();
 });
 </script>
 <template>
