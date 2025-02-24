@@ -20,7 +20,6 @@ const multipleOptions = ref(false);
 const reqNames = ref(false);
 const missingTitle = ref(false);
 const missingOptions = ref(false);
-const sessionToken = ref("");
 
 const deleteTask = () => {
   options.value.pop();
@@ -33,6 +32,11 @@ const addOption = () => {
 };
 
 const createPoll = async () => {
+  const isValid = await ValidateToken();
+  if (!isValid) {
+    return;
+  }
+
   const filteredOptions = options.value
     .map((options) => options.value.trim())
     .filter((value) => value !== "");
@@ -65,7 +69,7 @@ const createPoll = async () => {
     });
 
     const result = await response.json();
-    console.log("Poll created:", result);
+    //console.log("Poll created:", result);
 
     if (result.id) {
       router.push(`/poll/${result.id}`);

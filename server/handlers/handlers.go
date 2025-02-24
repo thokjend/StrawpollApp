@@ -82,7 +82,7 @@ func Login(c *gin.Context) {
 
 	// Create a session token
 	sessionToken := uuid.NewString()
-	expiresAt := 10 * time.Second
+	expiresAt := 45 * time.Second
 	key := "session:" + sessionToken 
 
 	// Store session token in Redis with expiration time
@@ -115,7 +115,7 @@ func AuthMiddleware() gin.HandlerFunc {
             return
         }
 
-		err = database.Client.Expire(database.Ctx, "session:"+token, 5*time.Minute).Err()
+		err = database.Client.Expire(database.Ctx, "session:"+token, 30*time.Second).Err()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not refresh session"})
 			c.Abort()

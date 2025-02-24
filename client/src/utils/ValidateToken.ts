@@ -10,7 +10,9 @@ export const ValidateToken = async () => {
 
   try {
     const response = await fetch("http://localhost:8080/protected-route", {
+      method: "GET",
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -23,11 +25,12 @@ export const ValidateToken = async () => {
       throw new Error("Unauthorized access");
     }
 
-    const result = await response.json();
-    console.log("Session verified:", result);
+    //const result = await response.json();
+    //console.log("Session verified:", result);
     return true;
   } catch (error) {
     console.error("Error verifying session", error);
+    localStorage.removeItem("sessionToken");
     router.push({ name: "Login" });
     return false;
   }

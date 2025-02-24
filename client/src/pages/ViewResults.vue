@@ -6,6 +6,7 @@ import VChart from "vue-echarts";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import router from "../router";
+import { ValidateToken } from "../utils/ValidateToken";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -18,6 +19,10 @@ const pollData = ref(null);
   "#FFFF00", // Yellow
   "#FF00FF", // Magenta
 ]; */
+
+onMounted(async () => {
+  await ValidateToken();
+});
 
 onMounted(async () => {
   try {
@@ -37,7 +42,7 @@ onMounted(async () => {
 
     chartOptions.value.series[0].data = pieData;
 
-    console.log(pollData.value);
+    //console.log(pollData.value);
   } catch (error) {
     console.log("Error fetching poll");
   }

@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import router from "../router";
 import ChoiceField from "../components/ChoiceField.vue";
+import { ValidateToken } from "../utils/ValidateToken";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -12,17 +13,25 @@ const userName = ref("");
 const missingOptions = ref(false);
 
 onMounted(async () => {
+  await ValidateToken();
+});
+
+onMounted(async () => {
   try {
     const response = await fetch(`http://localhost:8080/poll/${pollId}`);
     const result = await response.json();
     pollData.value = result.data;
-    console.log(pollData.value);
+    //console.log(pollData.value);
   } catch (error) {
     console.log("Error fetching poll");
   }
 });
 
 const submitVote = async () => {
+  const isValid = await ValidateToken();
+  if (!isValid) {
+    return;
+  }
   if (selectedOptions.value.length === 0) {
     missingOptions.value = true;
     return;
