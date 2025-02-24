@@ -115,24 +115,19 @@ func AuthMiddleware() gin.HandlerFunc {
             return
         }
 
+		err = database.Client.Expire(database.Ctx, "session:"+token, 5*time.Minute).Err()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not refresh session"})
+			c.Abort()
+			return
+		}
+
+
         c.Set("username", username) // Store username in context
         c.Next()
     }
 }
 
-/* func GetSession(c *gin.Context) {
-	userName := c.Param("username")
-
-	session, err := database.Client.Get(database.Ctx, userName+":session").Result()
-	if err != nil{
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve session"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Session retrived successfully",
-		"id": session,
-	})
-} */
 
 func CreatePoll(c *gin.Context) {
 	var pollData models.Poll

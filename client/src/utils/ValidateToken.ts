@@ -1,6 +1,6 @@
 import router from "../router";
 
-export const ValidateUser = async () => {
+export const ValidateToken = async () => {
   const token = localStorage.getItem("sessionToken");
 
   if (!token) {

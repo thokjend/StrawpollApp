@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import router from "../router";
-import { ValidateUser } from "../utils/ValidateUser";
+import { ValidateToken } from "../utils/ValidateToken";
 
 const options = ref([
   {
@@ -76,7 +76,7 @@ const createPoll = async () => {
 };
 
 onMounted(async () => {
-  await ValidateUser();
+  await ValidateToken();
 });
 </script>
 <template>
