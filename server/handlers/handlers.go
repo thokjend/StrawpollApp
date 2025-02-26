@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strawpoll-app/database"
+	"strawpoll-app/websocket"
 	"strings"
 	"time"
 
@@ -225,6 +226,8 @@ func VotePoll(c *gin.Context) {
 			return
 		}
 	}
+
+	websocket.BroadcastMessage("update")
 
 	c.JSON(http.StatusOK, gin.H{"message": "Vote recorded successfully"})
 }

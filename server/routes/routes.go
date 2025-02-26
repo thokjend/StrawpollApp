@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 	"strawpoll-app/handlers"
+	"strawpoll-app/websocket"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -26,6 +27,7 @@ func SetupRoutes() *gin.Engine {
 	router.POST("/create", handlers.CreatePoll)
 	router.GET("/poll/:id", handlers.GetPoll)
 	router.POST("/poll/:id/vote", handlers.VotePoll)
+	router.GET("/ws", websocket.HandleWebSocket)
 	router.GET("/protected-route", handlers.AuthMiddleware(), func(c *gin.Context) {
 		username, _ := c.Get("username")
 		c.JSON(http.StatusOK, gin.H{"message": "Access granted", "username": username})

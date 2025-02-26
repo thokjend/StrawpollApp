@@ -11,6 +11,7 @@ import { ValidateToken } from "../utils/ValidateToken";
 const route = useRoute();
 const pollId = route.params.id;
 const pollData = ref(null);
+const ws = ref(null);
 
 /* const colors = [
   "#FF0000", // Red
@@ -22,9 +23,31 @@ const pollData = ref(null);
 
 onMounted(async () => {
   await ValidateToken();
+  await fetchPollData();
+
+  ws.value = new WebSocket("ws://localhost:8080/ws");
+
+  ws.value.onopen = () => {
+    console.log("WebSocket connected");
+  };
+
+  ws.value.onmessage = async (event) => {
+    console.log("WebSocket message received:", event.data);
+    if (event.data === "update") {
+      await fetchPollData(); // Re-fetch poll data when an update is received
+    }
+  };
+
+  ws.value.onerror = (error) => {
+    console.error("WebSocket error:", error);
+  };
+
+  ws.value.onclose = () => {
+    console.log("WebSocket disconnected");
+  };
 });
 
-onMounted(async () => {
+const fetchPollData = async () => {
   try {
     const response = await fetch(`http://localhost:8080/poll/${pollId}`);
     const result = await response.json();
@@ -41,12 +64,11 @@ onMounted(async () => {
       }));
 
     chartOptions.value.series[0].data = pieData;
-
     //console.log(pollData.value);
   } catch (error) {
     console.log("Error fetching poll");
   }
-});
+};
 
 use([PieChart, CanvasRenderer]);
 const chartOptions = ref({
@@ -116,7 +138,7 @@ const GetAllVotes = () => {
         </div>
         <div class="mt-auto flex p-4">
           <button
-            @click.prevent="router.push(`/poll/${pollId}`)"
+            @click="router.push(`/poll/${pollId}`)"
             class="bg-blue-600 text-white rounded w-25 h-10 font-semibold hover:bg-blue-700 transition duration-300 cursor-pointer"
           >
             Back to poll
