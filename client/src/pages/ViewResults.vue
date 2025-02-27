@@ -7,6 +7,7 @@ import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import router from "../router";
 import { ValidateToken } from "../utils/ValidateToken";
+import { fetchPollData } from "../services/PollService";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -23,7 +24,7 @@ const ws = ref(null);
 
 onMounted(async () => {
   await ValidateToken();
-  await fetchPollData();
+  await handlePollData();
 
   ws.value = new WebSocket("ws://localhost:8080/ws");
 
@@ -34,7 +35,7 @@ onMounted(async () => {
   ws.value.onmessage = async (event) => {
     console.log("WebSocket message received:", event.data);
     if (event.data === "update") {
-      await fetchPollData(); // Re-fetch poll data when an update is received
+      await handlePollData(); // Re-fetch poll data when an update is received
     }
   };
 
@@ -47,10 +48,11 @@ onMounted(async () => {
   };
 });
 
-const fetchPollData = async () => {
+const handlePollData = async () => {
   try {
-    const response = await fetch(`http://localhost:8080/poll/${pollId}`);
-    const result = await response.json();
+    const result = await fetchPollData(pollId);
+    //const response = await fetch(`http://localhost:8080/poll/${pollId}`);
+    //const result = await response.json();
     pollData.value = result.data;
 
     const votes = pollData.value.votes;

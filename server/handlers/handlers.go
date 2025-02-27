@@ -227,7 +227,9 @@ func VotePoll(c *gin.Context) {
 		}
 	}
 
+	// Sends a WebSocket message to all connected clients
 	websocket.BroadcastMessage("update")
+	// Any client listening to the WebSocket will recive "update", which can be used to refresh the poll results in real time
 
 	c.JSON(http.StatusOK, gin.H{"message": "Vote recorded successfully"})
 }

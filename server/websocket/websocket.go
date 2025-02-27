@@ -10,6 +10,7 @@ import (
 )
 
 // WebSocket upgrader
+// upgrades a HTTP connection to a WebSocket connection
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -29,6 +30,7 @@ var Hub = WebSocketHub{
 }
 
 // WebSocket Handler
+// Upgrades a HTTP request to a WebSocket connection
 func HandleWebSocket(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
