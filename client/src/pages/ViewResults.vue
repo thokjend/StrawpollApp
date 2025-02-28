@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { PieChart } from "echarts/charts";
 import VChart from "vue-echarts";
 import { use } from "echarts/core";
@@ -8,11 +8,12 @@ import { CanvasRenderer } from "echarts/renderers";
 import router from "../router";
 import { ValidateToken } from "../utils/ValidateToken";
 import { fetchPollData } from "../services/PollService";
+import { WebSocketService } from "../services/WebSocketService";
 
 const route = useRoute();
 const pollId = route.params.id;
 const pollData = ref(null);
-const ws = ref(null);
+const wsService = new WebSocketService("ws://localhost:8080/ws");
 
 /* const colors = [
   "#FF0000", // Red
@@ -26,33 +27,22 @@ onMounted(async () => {
   await ValidateToken();
   await handlePollData();
 
-  ws.value = new WebSocket("ws://localhost:8080/ws");
-
-  ws.value.onopen = () => {
-    console.log("WebSocket connected");
-  };
-
-  ws.value.onmessage = async (event) => {
-    console.log("WebSocket message received:", event.data);
+  wsService.setOnMessageCallback(async (event) => {
     if (event.data === "update") {
-      await handlePollData(); // Re-fetch poll data when an update is received
+      await handlePollData();
     }
-  };
+  });
 
-  ws.value.onerror = (error) => {
-    console.error("WebSocket error:", error);
-  };
+  wsService.connect();
+});
 
-  ws.value.onclose = () => {
-    console.log("WebSocket disconnected");
-  };
+onUnmounted(() => {
+  wsService.disconnect();
 });
 
 const handlePollData = async () => {
   try {
     const result = await fetchPollData(pollId);
-    //const response = await fetch(`http://localhost:8080/poll/${pollId}`);
-    //const result = await response.json();
     pollData.value = result.data;
 
     const votes = pollData.value.votes;
