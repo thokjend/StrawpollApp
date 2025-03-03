@@ -169,6 +169,12 @@ func CreatePoll(c *gin.Context) {
 		return
 	}
 
+	err = database.Client.SAdd(database.Ctx, "polls" , id).Err()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save poll"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Poll created successfully",
 		"id":      id,
