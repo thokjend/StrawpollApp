@@ -7,7 +7,7 @@ import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import router from "../router";
 import { ValidateToken } from "../utils/ValidateToken";
-import { fetchPollData } from "../services/PollService";
+import { fetchSinglePoll } from "../services/PollService";
 import { WebSocketService } from "../services/WebSocketService";
 
 const route = useRoute();
@@ -42,7 +42,7 @@ onUnmounted(() => {
 
 const handlePollData = async () => {
   try {
-    const result = await fetchPollData(pollId);
+    const result = await fetchSinglePoll(pollId);
     pollData.value = result.data;
 
     const votes = pollData.value.votes;

@@ -4,12 +4,18 @@ import LoginPage from "../pages/Login.vue";
 import CreatePage from "../pages/Create.vue";
 import ViewPollPage from "../pages/ViewPoll.vue";
 import ViewResultPage from "../pages/ViewResults.vue";
+import MainPage from "../pages/Main.vue";
 
 const routes = [
   {
     path: "/",
     name: "Login",
     component: LoginPage,
+  },
+  {
+    path: "/main",
+    name: "Main",
+    component: MainPage,
   },
   {
     path: "/create",

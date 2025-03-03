@@ -25,9 +25,9 @@ export const ValidateToken = async () => {
       throw new Error("Unauthorized access");
     }
 
-    //const result = await response.json();
-    //console.log("Session verified:", result);
-    return true;
+    const result = await response.json();
+    console.log("Session verified:", result);
+    return result;
   } catch (error) {
     console.error("Error verifying session", error);
     localStorage.removeItem("sessionToken");

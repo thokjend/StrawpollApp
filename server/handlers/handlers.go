@@ -210,6 +210,16 @@ func GetPoll(c *gin.Context) {
 	})
 }
 
+func GetPolls(c *gin.Context){
+	polls, err := database.Client.SMembers(database.Ctx, "polls").Result()
+	if err != nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrive polls"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"polls": polls})
+}
+
 
 func VotePoll(c *gin.Context) {
 	pollID := c.Param("id")

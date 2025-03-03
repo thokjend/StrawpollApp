@@ -25,15 +25,15 @@ func SetupRoutes() *gin.Engine {
 	router.POST("/register", handlers.Register)
 	router.POST("/login", handlers.Login)
 	router.POST("/create", handlers.CreatePoll)
-	router.GET("/poll/:id", handlers.GetPoll)
 	router.POST("/poll/:id/vote", handlers.VotePoll)
+
+	router.GET("/poll/:id", handlers.GetPoll)
+	router.GET("/polls", handlers.GetPolls)
 	router.GET("/ws", websocket.HandleWebSocket)
 	router.GET("/protected-route", handlers.AuthMiddleware(), func(c *gin.Context) {
 		username, _ := c.Get("username")
 		c.JSON(http.StatusOK, gin.H{"message": "Access granted", "username": username})
 	})
-	//router.GET("/session/:username", handlers.GetSession)
-	
 	
 	return router
 }
