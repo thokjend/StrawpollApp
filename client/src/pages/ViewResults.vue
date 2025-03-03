@@ -6,9 +6,9 @@ import VChart from "vue-echarts";
 import { use } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import router from "../router";
-import { ValidateToken } from "../utils/ValidateToken";
 import { fetchSinglePoll } from "../services/PollService";
 import { WebSocketService } from "../services/WebSocketService";
+import Header from "../components/Header.vue";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -24,7 +24,6 @@ const wsService = new WebSocketService("ws://localhost:8080/ws");
 ]; */
 
 onMounted(async () => {
-  await ValidateToken();
   await handlePollData();
 
   wsService.setOnMessageCallback(async (event) => {
@@ -91,6 +90,7 @@ const GetAllVotes = () => {
   <div
     class="flex flex-col items-center justify-center min-h-screen w-full bg-sky-800 p-6"
   >
+    <Header></Header>
     <div
       class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-4xl w-full flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6"
     >

@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import router from "../router";
 import ChoiceField from "../components/ChoiceField.vue";
 import { ValidateToken } from "../utils/ValidateToken";
+import Header from "../components/Header.vue";
 
 const route = useRoute();
 const pollId = route.params.id;
@@ -11,10 +12,6 @@ const pollData = ref(null);
 const selectedOptions = ref([]);
 const userName = ref("");
 const missingOptions = ref(false);
-
-onMounted(async () => {
-  await ValidateToken();
-});
 
 onMounted(async () => {
   try {
@@ -61,6 +58,7 @@ const submitVote = async () => {
   <div
     class="flex flex-col items-center justify-center min-h-screen w-full bg-sky-800"
   >
+    <Header></Header>
     <form
       @submit.prevent="submitVote"
       v-if="pollData !== null"

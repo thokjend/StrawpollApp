@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import router from "../router";
 import { ValidateToken } from "../utils/ValidateToken";
+import Header from "../components/Header.vue";
 
 const options = ref([
   {
@@ -78,14 +79,14 @@ const createPoll = async () => {
     console.error("Error", error);
   }
 };
-
-onMounted(async () => {
-  await ValidateToken();
-});
 </script>
 <template>
-  <div class="flex flex-col items-center min-h-screen w-full bg-sky-800 py-10">
-    <h1 class="mb-4 text-3xl font-bold text-white">Create a poll</h1>
+  <div
+    class="flex flex-col items-center justify-center min-h-screen w-full bg-sky-800 pb-20"
+  >
+    <Header></Header>
+
+    <h1 class="mb-4 text-3xl font-bold text-white pt-20">Create a poll</h1>
     <form
       @submit.prevent="createPoll"
       class="border p-6 rounded-lg shadow-lg bg-white bg-opacity-80 max-w-xl w-full"
