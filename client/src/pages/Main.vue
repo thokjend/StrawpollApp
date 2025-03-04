@@ -3,32 +3,35 @@ import { onMounted, ref } from "vue";
 import { ValidateToken } from "../utils/ValidateToken";
 import Header from "../components/Header.vue";
 import { fetchAllPolls, fetchSinglePoll } from "../services/PollService";
+import { nextTick } from "vue";
 
 const polls = ref([]);
-const pollsDetails = ref([]);
+const pollsDetails = ref({});
 
 onMounted(async () => {
-  await fetchPollId();
+  await fetchPollIds();
   await getPolls();
-  console.log(pollsDetails.value);
 });
 
 const getPolls = async () => {
   try {
-    // Fetch details for each poll ID
+    // Wait for all poll requests to finish
     const pollData = await Promise.all(
       polls.value.map(async (id) => {
         const response = await fetchSinglePoll(id);
-        return response.data; // Extract `data` from the API response
+        console.log(`Response for ${id}:`, response.data);
+        return response.data;
       })
     );
-    pollDetails.value = pollData; // Store all fetched poll details
+
+    pollsDetails.value = pollData; // Store fetched poll details
+    console.log("Final poll details:", pollsDetails.value);
   } catch (error) {
-    console.log("Error fetching poll details");
+    console.log("Error fetching poll details", error);
   }
 };
 
-const fetchPollId = async () => {
+const fetchPollIds = async () => {
   try {
     const result = await fetchAllPolls();
     polls.value = result.polls;
