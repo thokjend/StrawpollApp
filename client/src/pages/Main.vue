@@ -2,6 +2,23 @@
 import { onMounted, ref } from "vue";
 import { ValidateToken } from "../utils/ValidateToken";
 import Header from "../components/Header.vue";
+import { fetchAllPolls } from "../services/PollService";
+
+const polls = ref([]);
+
+onMounted(async () => {
+  await getPolls();
+  console.log(polls.value);
+});
+
+const getPolls = async () => {
+  try {
+    const result = await fetchAllPolls();
+    polls.value = result.polls;
+  } catch (error) {
+    console.log("Error fetching polls");
+  }
+};
 </script>
 
 <template>
