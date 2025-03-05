@@ -47,15 +47,15 @@ const fetchPollIds = async () => {
 
 <template>
   <div
-    class="flex flex-col items-center min-h-screen w-full bg-sky-800 text-white p-4"
+    class="flex flex-col items-center min-h-screen w-full bg-sky-800 text-white p-30"
   >
     <Header></Header>
-    <div class="w-full max-w-2xl pt-20">
+    <div class="w-full max-w-2xl">
       <h1 class="text-xl font-bold mb-4">Polls</h1>
       <div
         v-for="(poll, index) in pollsDetails"
         :key="index"
-        class="mb-4 p-4 bg-gray-700 rounded-lg shadow-lg"
+        class="mb-4 p-4 bg-gray-700 rounded-lg shadow-lg hover:bg-gray-800 cursor-pointer"
         @click="navigateToPoll(polls[index])"
       >
         <h2 class="text-lg font-semibold">{{ poll.title }}</h2>
