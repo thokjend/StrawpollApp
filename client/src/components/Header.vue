@@ -13,6 +13,10 @@ const navigateToCreate = () => {
   router.push({ name: "Create" });
 };
 
+const navigateToMain = () => {
+  router.push({ name: "Main" });
+};
+
 onMounted(async () => {
   const token = await ValidateToken();
   if (token) {
@@ -29,7 +33,9 @@ onMounted(async () => {
       <li class="hover:underline cursor-pointer" @click="navigateToCreate">
         Create Poll
       </li>
-      <li class="hover:underline cursor-pointer">View Polls</li>
+      <li class="hover:underline cursor-pointer" @click="navigateToMain">
+        View Polls
+      </li>
     </ul>
 
     <ul class="flex gap-5 font-bold text-xl">

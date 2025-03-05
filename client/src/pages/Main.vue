@@ -4,9 +4,14 @@ import { ValidateToken } from "../utils/ValidateToken";
 import Header from "../components/Header.vue";
 import { fetchAllPolls, fetchSinglePoll } from "../services/PollService";
 import { nextTick } from "vue";
+import router from "../router";
 
 const polls = ref([]);
 const pollsDetails = ref({});
+
+const navigateToPoll = (id) => {
+  router.push(`/poll/${id}`);
+};
 
 onMounted(async () => {
   await fetchPollIds();
@@ -25,7 +30,6 @@ const getPolls = async () => {
     );
 
     pollsDetails.value = pollData; // Store fetched poll details
-    console.log("Final poll details:", pollsDetails.value);
   } catch (error) {
     console.log("Error fetching poll details", error);
   }
@@ -42,7 +46,31 @@ const fetchPollIds = async () => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center min-h-screen w-full bg-sky-800">
+  <div
+    class="flex flex-col items-center min-h-screen w-full bg-sky-800 text-white p-4"
+  >
     <Header></Header>
+    <div class="w-full max-w-2xl pt-20">
+      <h1 class="text-xl font-bold mb-4">Polls</h1>
+      <div
+        v-for="(poll, index) in pollsDetails"
+        :key="index"
+        class="mb-4 p-4 bg-gray-700 rounded-lg shadow-lg"
+        @click="navigateToPoll(polls[index])"
+      >
+        <h2 class="text-lg font-semibold">{{ poll.title }}</h2>
+        <p v-if="poll.description" class="text-sm text-gray-300">
+          {{ poll.description }}
+        </p>
+        <div class="mt-2">
+          <h3 class="text-md font-semibold">Votes:</h3>
+          <ul>
+            <li v-for="(voteCount, option) in poll.votes" :key="option">
+              {{ option }}: {{ voteCount }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
