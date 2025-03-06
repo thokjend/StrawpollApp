@@ -52,7 +52,11 @@ const fetchPollIds = async () => {
     <Header></Header>
     <div class="w-full max-w-2xl">
       <h1 class="text-xl font-bold mb-4">Polls</h1>
+      <p v-if="Object.keys(pollsDetails).length === 0" class="text-gray-300">
+        No polls available
+      </p>
       <div
+        v-else
         v-for="(poll, index) in pollsDetails"
         :key="index"
         class="mb-4 p-4 bg-gray-700 rounded-lg shadow-lg hover:bg-gray-800 cursor-pointer"
